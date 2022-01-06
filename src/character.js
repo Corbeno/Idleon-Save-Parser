@@ -1,3 +1,6 @@
+const Stat = require("./stat").Stat;
+const StatName = require("./stat").name;
+
 function Character(args) {
     
     let fields = args.save;
@@ -23,13 +26,24 @@ function Character(args) {
             let statueArray = JSON.parse(fields["StatueLevels_" + i]);
             let statueItems = [];
             for (var j = 0; j < statueArray.length; j++) {
+                let statueStatic = static.StatueRepo[j];
+                let level = parseInt(statueArray[j][0]);
                 statueItems.push({
-                    "level": parseInt(statueArray[j][0]),
-                    "progress": statueArray[j][1]
+                    "name": statueStatic.name,
+                    "level": level,
+                    "progress": statueArray[j][1],
+                    [StatName]: function(){
+                        return new Stat({
+                            name: statueStatic.effect,
+                            value: statueStatic.bonus * level
+                        });
+                    }()
                 });
             }
-            //EXAMPLE
-            console.log(JSON.stringify(static.CardRepo.mushG));
+            
+            // console.log(JSON.stringify(statueItems));
+            // console.log("");
+            
             return statueItems;
         }()
 
